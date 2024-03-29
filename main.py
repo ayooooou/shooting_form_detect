@@ -4,9 +4,12 @@ import mediapipe as mp
 import time 
 import math
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog
+import os
 
 #read
-cap = cv2.VideoCapture("opencv\shoting_detect\\5.mp4")
+#cap = cv2.VideoCapture("opencv\shooting_detect\\video\\5.mp4")
 #cap = cv2.VideoCapture(0)
 
 #mediapipe
@@ -75,22 +78,22 @@ def Figure_angle(x1,y1,x2,y2,x3,y3):
 弧度轉換成度數：最後，我們將夾角的弧度值轉換成度數，這樣我們就可以得到以度為單位的夾角值。'''
 
 #draw
-plt.style.use('bmh')
-plt.xlabel('time(frame)')
-plt.ylabel('angle')
-plt.plot(Relbow_list,'b',label='elbow')
-plt.plot(Rshoulder_list,'g',label='shoulder')
-plt.plot(Rbody_list,'r',label='body')
-plt.plot(Rknee_list,'y',label='knee')
-plt.legend(loc='lower left')
-def drawPlt():
-    if RL == "R":
-        plt.plot(Relbow_list,'b')
-        plt.plot(Rshoulder_list,'g')
-        plt.plot(Rbody_list,'r')
-        plt.plot(Rknee_list,'y')
-        
-        plt.pause(0.01)
+class Draw():
+    plt.style.use('bmh')
+    plt.xlabel('time(frame)')
+    plt.ylabel('angle')
+    plt.plot(Relbow_list,'b',label='elbow')
+    plt.plot(Rshoulder_list,'g',label='shoulder')
+    plt.plot(Rbody_list,'r',label='body')
+    plt.plot(Rknee_list,'y',label='knee')
+    plt.legend(loc='lower left')
+    def drawPlt():
+        if RL == "R":
+            plt.plot(Relbow_list,'b')
+            plt.plot(Rshoulder_list,'g')
+            plt.plot(Rbody_list,'r')
+            plt.plot(Rknee_list,'y')
+            plt.pause(0.01)
 
 
 
@@ -158,44 +161,68 @@ class Angle():
             Rknee_list.append(angle_deg)
 
 #show
-while True:
-    ret,frame=cap.read() #讀取回傳ret(bool)看是否有畫面 和 當前偵數的畫面frame
-    if ret:
-        imgH = frame.shape[0]
-        imgW = frame.shape[1]
-        #frame = cv2.resize(frame,(0,0),fx=0.5,fy=0.5)
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # 將幀轉換為 RGB 格式
-        results = pose.process(frame_rgb)  # 進行姿勢關鍵點檢測
+def show():
+    while True:
+        global ret,frame,xPos,yPos,imgH,imgW,lms
+        ret,frame=cap.read() #讀取回傳ret(bool)看是否有畫面 和 當前偵數的畫面frame
+        if ret:
+            imgH = frame.shape[0]
+            imgW = frame.shape[1]
+            #frame = cv2.resize(frame,(0,0),fx=0.5,fy=0.5)
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # 將幀轉換為 RGB 格式
+            results = pose.process(frame_rgb)  # 進行姿勢關鍵點檢測
         
-        # 繪製關鍵點
-        if results.pose_landmarks:
-            mp_drawing.draw_landmarks(frame, results.pose_landmarks, mpPose.POSE_CONNECTIONS)
-            for i,lm in enumerate(results.pose_landmarks.landmark):
-                xPos = int(lm.x*imgW)
-                yPos = int(lm.y*imgH)
-                lms=results.pose_landmarks
+            # 繪製關鍵點
+            if results.pose_landmarks:
+                mp_drawing.draw_landmarks(frame, results.pose_landmarks, mpPose.POSE_CONNECTIONS)
+                for i,lm in enumerate(results.pose_landmarks.landmark):
+                    xPos = int(lm.x*imgW)
+                    yPos = int(lm.y*imgH)
+                    lms=results.pose_landmarks
 
-                #print(i, xPos, yPos)
-                #cv2.putText(frame,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)#0.4大小
+                    #print(i, xPos, yPos)
+                    #cv2.putText(frame,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)#0.4大小
 
-                # if i in point_body:
-                #     cv2.circle(frame,(xPos,yPos),10,(0,255,0),cv2.FILLED)
+                    # if i in point_body:
+                    #     cv2.circle(frame,(xPos,yPos),10,(0,255,0),cv2.FILLED)
         
-            Angle.Lelbow()
-            Angle.Relbow()
-            Angle.Rshoulder()
-            Angle.Rbody()
-            Angle.Rknee()
-            drawPlt()
-            fps_show()
-        cv2.imshow("Output",frame)
+                Angle.Lelbow()
+                Angle.Relbow()
+                Angle.Rshoulder()
+                Angle.Rbody()
+                Angle.Rknee()
+                Draw.drawPlt()
+                fps_show()
+            cv2.imshow("Output",frame)
 
 
-    else:
-        break
-    #wait_time = int(1000 / fps)
-    if cv2.waitKey(1)==ord("q"):
-        break
+        else:
+            break
+        #wait_time = int(1000 / fps)
+        if cv2.waitKey(1)==ord("q"):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
 
-#
+#tk
+window = tk.Tk()
+window.title('shooting detect')
+window.geometry('380x400')
+window.resizable(False, False)
+window.iconbitmap('opencv\shooting_detect\icon.ico')
+start_buttom = tk.Button(window,text="start",command=show)
+file_path = "none"
+def open_file_dialog():
+    file_path = filedialog.askopenfilename()
+    upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
+    global cap
+    cap = cv2.VideoCapture(file_path)
+upload_buttom = tk.Button(window,text="upload file",command=open_file_dialog)
+upload_file_name_label = tk.Label(window,text=f"file name:{file_path}")
+
+#place
+upload_buttom.pack()
+upload_file_name_label.pack()
+start_buttom.pack()
+window.mainloop()
