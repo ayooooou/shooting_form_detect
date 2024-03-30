@@ -33,8 +33,12 @@ def fps_show():
     global pTime
     cTime=time.time()
     fps = 1/(cTime-pTime)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    global total_video_seconds
+    total_video_seconds = total_frames * (1 / fps)
     pTime=cTime
     cv2.putText(frame,f"fps:{int(fps)}",(30,50),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,0),3)
+
 
 #Figure_angle
 def Figure_angle(x1,y1,x2,y2,x3,y3):
@@ -94,7 +98,6 @@ class Draw():
             plt.plot(Rbody_list,'r')
             plt.plot(Rknee_list,'y')
             plt.pause(0.01)
-
 
 
 class Angle():
@@ -160,6 +163,7 @@ class Angle():
             cv2.putText(frame,str(f"knee:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
             Rknee_list.append(angle_deg)
 
+
 #show
 def show():
     while True:
@@ -191,8 +195,9 @@ def show():
                 Angle.Rshoulder()
                 Angle.Rbody()
                 Angle.Rknee()
-                Draw.drawPlt()
                 fps_show()
+                Draw.drawPlt()
+                
             cv2.imshow("Output",frame)
 
 
@@ -206,25 +211,27 @@ def show():
 
 
 #tk
-window = tk.Tk()
-window.title('shooting detect')
-window.geometry('380x400')
-window.resizable(False, False)
-window.iconbitmap('opencv\shooting_detect\icon.ico')
-title_label=tk.Label(window,text="shooting detect",font=("Helvetica", 30))
-start_buttom = tk.Button(window,text="start",command=show,width=20)
-file_path = "none"
-def open_file_dialog():
-    file_path = filedialog.askopenfilename()
-    upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
-    global cap
-    cap = cv2.VideoCapture(file_path)
-upload_buttom = tk.Button(window,text="upload file",command=open_file_dialog,width=20)
-upload_file_name_label = tk.Label(window,text=f"file name:{file_path}")
+class tk_window():
+    window = tk.Tk()
+    window.title('shooting detect')
+    window.geometry('380x400')
+    window.resizable(False, False)
+    window.iconbitmap('opencv\shooting_detect\icon.ico')
+    title_label=tk.Label(window,text="shooting detect",font=("Helvetica", 30))
+    start_buttom = tk.Button(window,text="start",command=show,width=20)
+    file_path = "none"
+    def open_file_dialog():
+        file_path = filedialog.askopenfilename()
+        upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
+        global cap
+        cap = cv2.VideoCapture(file_path)
+    upload_buttom = tk.Button(window,text="upload file",command=open_file_dialog,width=20)
+    global upload_file_name_label
+    upload_file_name_label = tk.Label(window,text=f"file name:{file_path}")
 
-#place
-title_label.pack(side=tk.TOP)
-upload_buttom.pack()
-upload_file_name_label.pack()
-start_buttom.pack()
-window.mainloop()
+    #place
+    title_label.pack(side=tk.TOP)
+    upload_buttom.pack()
+    upload_file_name_label.pack()
+    start_buttom.pack()
+    window.mainloop()
