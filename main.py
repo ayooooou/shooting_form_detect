@@ -101,6 +101,17 @@ class Draw():
 
 
 class Angle():
+    def R_angle(list_name,a,b,c):
+        x1, y1 = int(lms.landmark[a].x * imgW), int(lms.landmark[a].y * imgH)
+        x2, y2 = int(lms.landmark[b].x * imgW), int(lms.landmark[b].y * imgH)
+        x3, y3 = int(lms.landmark[c].x * imgW), int(lms.landmark[c].y * imgH)
+        angle_deg=Figure_angle(x1,y1,x2,y2,x3,y3)
+        # 顯示    
+        xPos = int(lms.landmark[b].x*imgW)
+        yPos = int(lms.landmark[b].y*imgH)
+        cv2.putText(frame,str(f"{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
+        list_name.append(angle_deg)
+        #print("R: ",angle_deg)
     def Lelbow():
         x1, y1 = int(lms.landmark[11].x * imgW), int(lms.landmark[11].y * imgH)
         x2, y2 = int(lms.landmark[13].x * imgW), int(lms.landmark[13].y * imgH)
@@ -113,56 +124,6 @@ class Angle():
             cv2.putText(frame,str(f"L:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
             print("L: ",angle_deg)
     
-    def Relbow():
-        x1, y1 = int(lms.landmark[12].x * imgW), int(lms.landmark[12].y * imgH)
-        x2, y2 = int(lms.landmark[14].x * imgW), int(lms.landmark[14].y * imgH)
-        x3, y3 = int(lms.landmark[16].x * imgW), int(lms.landmark[16].y * imgH)
-        angle_deg=Figure_angle(x1,y1,x2,y2,x3,y3)
-
-        # 顯示    
-        if RL == "R":
-            xPos = int(lms.landmark[14].x*imgW)
-            yPos = int(lms.landmark[14].y*imgH)
-            cv2.putText(frame,str(f"Relbow:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
-            Relbow_list.append(angle_deg)
-            #print("R: ",angle_deg)
-        
-    def Rshoulder():
-        x1, y1 = int(lms.landmark[14].x * imgW), int(lms.landmark[14].y * imgH)
-        x2, y2 = int(lms.landmark[12].x * imgW), int(lms.landmark[12].y * imgH)
-        x3, y3 = int(lms.landmark[24].x * imgW), int(lms.landmark[24].y * imgH)
-        angle_deg=Figure_angle(x1,y1,x2,y2,x3,y3)
-        # 顯示    
-        if RL == "R":
-            xPos = int(lms.landmark[12].x*imgW)
-            yPos = int(lms.landmark[12].y*imgH)
-            cv2.putText(frame,str(f"shoulder:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
-            Rshoulder_list.append(angle_deg)
-    
-    def Rbody():
-        x1, y1 = int(lms.landmark[12].x * imgW), int(lms.landmark[12].y * imgH)
-        x2, y2 = int(lms.landmark[24].x * imgW), int(lms.landmark[24].y * imgH)
-        x3, y3 = int(lms.landmark[26].x * imgW), int(lms.landmark[26].y * imgH)
-        angle_deg=Figure_angle(x1,y1,x2,y2,x3,y3)
-        # 顯示    
-        if RL == "R":
-            xPos = int(lms.landmark[24].x*imgW)
-            yPos = int(lms.landmark[24].y*imgH)
-            cv2.putText(frame,str(f"body:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
-            Rbody_list.append(angle_deg)
-
-    def Rknee():
-        x1, y1 = int(lms.landmark[24].x * imgW), int(lms.landmark[24].y * imgH)
-        x2, y2 = int(lms.landmark[26].x * imgW), int(lms.landmark[26].y * imgH)
-        x3, y3 = int(lms.landmark[28].x * imgW), int(lms.landmark[28].y * imgH)
-        angle_deg=Figure_angle(x1,y1,x2,y2,x3,y3)
-        # 顯示    
-        if RL == "R":
-            xPos = int(lms.landmark[26].x*imgW)
-            yPos = int(lms.landmark[26].y*imgH)
-            cv2.putText(frame,str(f"knee:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
-            Rknee_list.append(angle_deg)
-
 
 #show
 def show():
@@ -190,11 +151,15 @@ def show():
                     # if i in point_body:
                     #     cv2.circle(frame,(xPos,yPos),10,(0,255,0),cv2.FILLED)
         
-                Angle.Lelbow()
-                Angle.Relbow()
-                Angle.Rshoulder()
-                Angle.Rbody()
-                Angle.Rknee()
+                # Angle.Lelbow()
+                # Angle.Relbow()
+                # Angle.Rshoulder()
+                # Angle.Rbody()
+                # Angle.Rknee()
+                Angle.R_angle(Relbow_list,12,14,16)
+                Angle.R_angle(Rshoulder_list,14,12,24)
+                Angle.R_angle(Rbody_list,12,24,26)
+                Angle.R_angle(Rknee_list,24,26,28)
                 fps_show()
                 Draw.drawPlt()
                 
@@ -209,6 +174,12 @@ def show():
     cap.release()
     cv2.destroyAllWindows()
 
+class analyze_data():
+    def detect_start_motion(detected_list):
+        if detected_list:
+            return
+        
+    
 
 #tk
 class tk_window():
