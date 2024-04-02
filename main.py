@@ -184,12 +184,11 @@ class tk_window():
     window.title('shooting detect')
     window.geometry('380x400')
     window.resizable(False, False)
-    window.iconbitmap('opencv\shooting_detect\icon.ico')
     title_label=tk.Label(window,text="shooting detect",font=("Helvetica", 30))
     start_buttom = tk.Button(window,text="start",command=show,width=20)
     file_path = "none"
     def open_file_dialog():
-        file_path = filedialog.askopenfilename()
+        file_path =  filedialog.askopenfilename()
         upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
         global cap
         cap = cv2.VideoCapture(file_path)
