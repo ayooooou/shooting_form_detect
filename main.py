@@ -8,10 +8,6 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 
-#read
-#cap = cv2.VideoCapture("opencv\shooting_detect\\video\\5.mp4")
-#cap = cv2.VideoCapture(0)
-
 #mediapipe
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
@@ -183,6 +179,7 @@ class analyze_data():
 
 #tk
 class tk_window():
+    global window
     window = tk.Tk()
     window.title('shooting detect')
     window.geometry('380x400')
