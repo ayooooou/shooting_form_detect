@@ -21,7 +21,7 @@ jobs:
         python-version: '3.8'
 
     - name: Install PyInstaller
-      run: pip install pyinstaller customtkinter
+      run: pip install pyinstaller mediapipe numpy opencv-python matplotlib.pyplot tkinter
 
     - name: Build Executable with PyInstaller
       run: pyinstaller --onefile --clean main.py
@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows-executable
-        path: /dist/main.exe
+        path: dist/main.exe
