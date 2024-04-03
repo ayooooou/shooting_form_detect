@@ -24,10 +24,10 @@ jobs:
       run: pip install pyinstaller customtkinter
 
     - name: Build Executable with PyInstaller
-      run: pyinstaller --onefile --clean tk22.py
+      run: pyinstaller --onefile --clean main.py
 
     - name: Upload Executable as Artifact
       uses: actions/upload-artifact@v2
       with:
         name: windows-executable
-        path: dist/tk22.exe
+        path: dist/main.exe
