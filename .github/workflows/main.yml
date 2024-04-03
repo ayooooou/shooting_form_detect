@@ -20,8 +20,8 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install PyInstaller
-      run: pip install pyinstaller mediapipe numpy opencv-python matplotlib.pyplot tkinter
+    - name: Install mould
+      run: pip install pyinstaller mediapipe numpy opencv-python tkinter matplotlib
 
     - name: Build Executable with PyInstaller
       run: pyinstaller --onefile --clean main.py
