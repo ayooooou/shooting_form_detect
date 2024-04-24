@@ -123,8 +123,9 @@ class Angle():
 
 #show
 def show():
-    while True:
-        global ret,frame,xPos,yPos,imgH,imgW,lms
+    global running,ret,frame,xPos,yPos,imgH,imgW,lms
+    running = True
+    while running:
         ret,frame=cap.read() #讀取回傳ret(bool)看是否有畫面 和 當前偵數的畫面frame
         if ret:
             imgH = frame.shape[0]
@@ -169,12 +170,27 @@ def show():
             break
     cap.release()
     cv2.destroyAllWindows()
+    
 
 class analyze_data():
     def detect_start_motion(detected_list):
         if detected_list:
             return
         
+
+def stop_video():
+    global running
+    running = False  # 停止視頻播放循環
+
+def new_plt():
+    global Relbow_list,Rshoulder_list,Rbody_list,Rknee_list
+    Relbow_list=[]
+    Rshoulder_list = []
+    Rbody_list = []
+    Rknee_list = []
+    plt.figure()
+    plt.clf()
+    plt.show()
     
 
 #tk
@@ -182,25 +198,28 @@ class tk_window():
     global window
     window = tk.Tk()
     window.title('shooting detect')
-    window.geometry('380x400')
-    window.resizable(False, False)
+    window.geometry('400x400')
+    window.resizable(True, False)
     title_label=tk.Label(window,text="shooting detect",font=("Helvetica", 30))
-    start_buttom = tk.Button(window,text="start",command=show,width=20)
+    start_button = tk.Button(window,text="start",command=show,width=10)
+    stop_button = tk.Button(window,text="stop",command=stop_video,width=10)
+    new_plt_button = tk.Button(window,text="new plt",command=new_plt,width=10)
     file_path = "none"
     def open_file_dialog():
         file_path =  filedialog.askopenfilename()
         upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
         global cap
         cap = cv2.VideoCapture(file_path)
-    upload_buttom = tk.Button(window,text="upload file",command=open_file_dialog,width=20)
+    upload_button = tk.Button(window,text="upload file",command=open_file_dialog,width=10)
     global upload_file_name_label
-    upload_file_name_label = tk.Label(window,text=f"file name:{file_path}")
+    upload_file_name_label = tk.Label(window,text=f"file name:{file_path}", width=15)
 
     #place
-    title_label.pack(side=tk.TOP)
-    upload_buttom.pack()
-    upload_file_name_label.pack()
-    start_buttom.pack()
-    window.mainloop()
 
-#f
+    title_label.grid(column=0, row=0, columnspan=3)
+    upload_button.grid(column=0, row=2)
+    upload_file_name_label.grid(column=1, row=2)
+    start_button.grid(column=0, row=3,pady=20)
+    stop_button.grid(column=1, row=3)
+    new_plt_button.grid(column=2, row=3)
+    window.mainloop()
