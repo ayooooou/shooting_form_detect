@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import filedialog
 import os
+import threading
 
 #mediapipe
 mpPose = mp.solutions.pose
@@ -14,11 +15,13 @@ pose = mpPose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 
 #record_list
-Relbow_list = []
-Rshoulder_list = []
-Rbody_list = []
-Rknee_list = []
-
+def reset():
+    global Relbow_list,Rshoulder_list,Rbody_list,Rknee_list
+    Relbow_list = []
+    Rshoulder_list = []
+    Rbody_list = []
+    Rknee_list = []
+reset()
 
 #RL
 RL = "R"
@@ -183,43 +186,48 @@ def stop_video():
     running = False  # 停止視頻播放循環
 
 def new_plt():
-    global Relbow_list,Rshoulder_list,Rbody_list,Rknee_list
-    Relbow_list=[]
-    Rshoulder_list = []
-    Rbody_list = []
-    Rknee_list = []
+    reset()
     plt.figure()
-    plt.clf()
+    plt.style.use('bmh')
+    plt.xlabel('time(frame)')
+    plt.ylabel('angle')
+    plt.plot(Relbow_list,'b',label='elbow')
+    plt.plot(Rshoulder_list,'g',label='shoulder')
+    plt.plot(Rbody_list,'r',label='body')
+    plt.plot(Rknee_list,'y',label='knee')
+    plt.legend(loc='lower left')
     plt.show()
+
     
 
+first_plt= True
 #tk
 class tk_window():
     global window
     window = tk.Tk()
     window.title('shooting detect')
-    window.geometry('400x400')
+    window.geometry('400x200')
     window.resizable(True, False)
     title_label=tk.Label(window,text="shooting detect",font=("Helvetica", 30))
     start_button = tk.Button(window,text="start",command=show,width=10)
     stop_button = tk.Button(window,text="stop",command=stop_video,width=10)
-    new_plt_button = tk.Button(window,text="new plt",command=new_plt,width=10)
     file_path = "none"
     def open_file_dialog():
         file_path =  filedialog.askopenfilename()
         upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
-        global cap
+        global cap,first_plt
         cap = cv2.VideoCapture(file_path)
+        if not first_plt:
+            new_plt()
+        first_plt = False
     upload_button = tk.Button(window,text="upload file",command=open_file_dialog,width=10)
     global upload_file_name_label
     upload_file_name_label = tk.Label(window,text=f"file name:{file_path}", width=15)
 
     #place
-
     title_label.grid(column=0, row=0, columnspan=3)
     upload_button.grid(column=0, row=2)
     upload_file_name_label.grid(column=1, row=2)
     start_button.grid(column=0, row=3,pady=20)
     stop_button.grid(column=1, row=3)
-    new_plt_button.grid(column=2, row=3)
     window.mainloop()
