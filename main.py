@@ -9,6 +9,8 @@ from tkinter import filedialog
 import os
 import threading
 
+#狀況一 多線程
+
 #mediapipe
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
@@ -42,16 +44,16 @@ def fps_show():
 #Figure_angle
 def Figure_angle(x1,y1,x2,y2,x3,y3):
     
-    # 計算向量 AB 和 BC
+    # 計算A和B  B和C 的xy差
     AB = (x2 - x1, y2 - y1)
     BC = (x3 - x2, y3 - y2)
     
-    # 計算 AB 和 BC 的內積
+    # 計算 AB 和 BC 的內積(x1*x2 + y1*y2)
     dot_product = AB[0] * BC[0] + AB[1] * BC[1]
     
-    # 計算 AB 和 BC 的大小
-    magnitude_AB = math.sqrt(AB[0]**2 + AB[1]**2)
-    magnitude_BC = math.sqrt(BC[0]**2 + BC[1]**2)
+    # 計算 AB 和 BC 的向量大小
+    magnitude_AB = math.sqrt(AB[0]**2 + AB[1]**2) #AB線段
+    magnitude_BC = math.sqrt(BC[0]**2 + BC[1]**2) #BC線段
     
     # 計算夾角的餘弦值
     cosine_angle = dot_product / (magnitude_AB * magnitude_BC)
@@ -70,15 +72,6 @@ def Figure_angle(x1,y1,x2,y2,x3,y3):
     angle_deg = int(180 - angle_deg)
 
     return angle_deg
-    '''向量的概念：在這個情況下，我們將兩個點之間的連線視為一個向量。例如，點 A(x1, y1) 和點 B(x2, y2) 之間的向量可以表示為 AB = (x2 - x1, y2 - y1)。這個向量的方向和大小可以描述兩點之間的位移和距離。
-
-內積：內積是向量的一種運算，可以用來計算兩個向量之間的相似度。在這個情況下，我們使用內積來計算兩個向量 AB 和 BC 的相似度，它們的內積為 AB[0] * BC[0] + AB[1] * BC[1]。
-
-夾角的餘弦值：當我們知道兩個向量的內積和它們的大小時，我們可以使用夾角的餘弦值來計算夾角。夾角的餘弦值等於兩個向量的內積除以它們的大小的乘積，即 cosine_angle = dot_product / (magnitude_AB * magnitude_BC)。
-
-反餘弦函數：當我們知道夾角的餘弦值時，我們可以使用反餘弦函數（也稱為 arccos 函數）來計算夾角的弧度。反餘弦函數會返回夾角的弧度值，這個值介於 0 到 π 之間。
-
-弧度轉換成度數：最後，我們將夾角的弧度值轉換成度數，這樣我們就可以得到以度為單位的夾角值。'''
 
 #draw
 class Draw():
@@ -97,7 +90,18 @@ class Draw():
             plt.plot(Rbody_list,'r')
             plt.plot(Rknee_list,'y')
             plt.pause(0.01)
-
+    def new_plt():
+        reset()
+        plt.figure()
+        plt.style.use('bmh')
+        plt.xlabel('time(frame)')
+        plt.ylabel('angle')
+        plt.plot(Relbow_list,'b',label='elbow')
+        plt.plot(Rshoulder_list,'g',label='shoulder')
+        plt.plot(Rbody_list,'r',label='body')
+        plt.plot(Rknee_list,'y',label='knee')
+        plt.legend(loc='lower left')
+        plt.show()
 
 class Angle():
     def R_angle(list_name,a,b,c):
@@ -151,11 +155,6 @@ def show():
                     # if i in point_body:
                     #     cv2.circle(frame,(xPos,yPos),10,(0,255,0),cv2.FILLED)
         
-                # Angle.Lelbow()
-                # Angle.Relbow()
-                # Angle.Rshoulder()
-                # Angle.Rbody()
-                # Angle.Rknee()
                 Angle.R_angle(Relbow_list,12,14,16)
                 Angle.R_angle(Rshoulder_list,14,12,24)
                 Angle.R_angle(Rbody_list,12,24,26)
@@ -185,21 +184,6 @@ def stop_video():
     global running
     running = False  # 停止視頻播放循環
 
-def new_plt():
-    reset()
-    plt.figure()
-    plt.style.use('bmh')
-    plt.xlabel('time(frame)')
-    plt.ylabel('angle')
-    plt.plot(Relbow_list,'b',label='elbow')
-    plt.plot(Rshoulder_list,'g',label='shoulder')
-    plt.plot(Rbody_list,'r',label='body')
-    plt.plot(Rknee_list,'y',label='knee')
-    plt.legend(loc='lower left')
-    plt.show()
-
-    
-
 first_plt= True
 #tk
 class tk_window():
@@ -218,7 +202,7 @@ class tk_window():
         global cap,first_plt
         cap = cv2.VideoCapture(file_path)
         if not first_plt:
-            new_plt()
+            Draw.new_plt()
         first_plt = False
     upload_button = tk.Button(window,text="upload file",command=open_file_dialog,width=10)
     global upload_file_name_label
