@@ -9,7 +9,9 @@ from tkinter import filedialog
 import os
 import threading
 
-#狀況一 多線程
+#多線程
+#數學原理
+#打包
 
 #mediapipe
 mpPose = mp.solutions.pose
@@ -44,24 +46,24 @@ def fps_show():
 #Figure_angle
 def Figure_angle(x1,y1,x2,y2,x3,y3):
     
-    # 計算A和B  B和C 的xy差
-    AB = (x2 - x1, y2 - y1)
-    BC = (x3 - x2, y3 - y2)
+    # 計算 AB 和 BC 的x y長度
+    a = (x2 - x1, y2 - y1)
+    b = (x3 - x2, y3 - y2)
     
-    # 計算 AB 和 BC 的內積(x1*x2 + y1*y2)
-    dot_product = AB[0] * BC[0] + AB[1] * BC[1]
+    # 計算 AB 和 BC 的向量大小(畢氏定理計算出向量的長度)
+    magnitude_AB = math.sqrt(a[0]**2 + a[1]**2) #AB線段
+    magnitude_BC = math.sqrt(b[0]**2 + b[1]**2) #BC線段
     
-    # 計算 AB 和 BC 的向量大小
-    magnitude_AB = math.sqrt(AB[0]**2 + AB[1]**2) #AB線段
-    magnitude_BC = math.sqrt(BC[0]**2 + BC[1]**2) #BC線段
-    
-    # 計算夾角的餘弦值
+    # 計算 AB 和 BC 的內積 (公式 : a ⋅ b = |a| |b| cosθ = x1x2 + y1y2 )
+    dot_product = a[0] * b[0] + a[1] * b[1]
+
+    # 計算夾角的cosθ (cosθ = a ⋅ b / |a| |b|)
     cosine_angle = dot_product / (magnitude_AB * magnitude_BC)
     
-    # 計算弧度值的夾角
+    # 把cosθ轉為兩邊夾角的弧度
     angle_radians = math.acos(cosine_angle)
     
-    # 將弧度轉換為度數
+    # 將弧度轉換為度數(角度)
     angle_deg = math.degrees(angle_radians)
     
     # 確定較小的夾角
