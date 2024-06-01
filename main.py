@@ -13,6 +13,12 @@ import threading
 #數學原理
 #打包
 
+# class TK():
+
+# class Opevcv():
+
+# class Plt():
+
 #mediapipe
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
@@ -41,7 +47,6 @@ def fps_show():
     total_video_seconds = total_frames * (1 / fps)
     pTime=cTime
     cv2.putText(frame,f"fps:{int(fps)}",(30,50),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,0),3)
-
 
 #Figure_angle
 def Figure_angle(x1,y1,x2,y2,x3,y3):
@@ -76,7 +81,24 @@ def Figure_angle(x1,y1,x2,y2,x3,y3):
     return angle_deg
 
 #draw
-class Draw():
+plt.style.use('bmh')
+plt.xlabel('time(frame)')
+plt.ylabel('angle')
+plt.plot(Relbow_list,'b',label='elbow')
+plt.plot(Rshoulder_list,'g',label='shoulder')
+plt.plot(Rbody_list,'r',label='body')
+plt.plot(Rknee_list,'y',label='knee')
+plt.legend(loc='lower left')
+def drawPlt():
+    if RL == "R":
+        plt.plot(Relbow_list,'b')
+        plt.plot(Rshoulder_list,'g')
+        plt.plot(Rbody_list,'r')
+        plt.plot(Rknee_list,'y')
+        plt.pause(0.01)
+def new_plt():
+    reset()
+    plt.figure()
     plt.style.use('bmh')
     plt.xlabel('time(frame)')
     plt.ylabel('angle')
@@ -85,25 +107,7 @@ class Draw():
     plt.plot(Rbody_list,'r',label='body')
     plt.plot(Rknee_list,'y',label='knee')
     plt.legend(loc='lower left')
-    def drawPlt():
-        if RL == "R":
-            plt.plot(Relbow_list,'b')
-            plt.plot(Rshoulder_list,'g')
-            plt.plot(Rbody_list,'r')
-            plt.plot(Rknee_list,'y')
-            plt.pause(0.01)
-    def new_plt():
-        reset()
-        plt.figure()
-        plt.style.use('bmh')
-        plt.xlabel('time(frame)')
-        plt.ylabel('angle')
-        plt.plot(Relbow_list,'b',label='elbow')
-        plt.plot(Rshoulder_list,'g',label='shoulder')
-        plt.plot(Rbody_list,'r',label='body')
-        plt.plot(Rknee_list,'y',label='knee')
-        plt.legend(loc='lower left')
-        plt.show()
+    plt.show()
 
 class Angle():
     def R_angle(list_name,a,b,c):
@@ -116,7 +120,6 @@ class Angle():
         yPos = int(lms.landmark[b].y*imgH)
         cv2.putText(frame,str(f"{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
         list_name.append(angle_deg)
-        #print("R: ",angle_deg)
     def Lelbow():
         x1, y1 = int(lms.landmark[11].x * imgW), int(lms.landmark[11].y * imgH)
         x2, y2 = int(lms.landmark[13].x * imgW), int(lms.landmark[13].y * imgH)
@@ -129,7 +132,6 @@ class Angle():
             cv2.putText(frame,str(f"L:{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
             print("L: ",angle_deg)
     
-
 #show
 def show():
     global running,ret,frame,xPos,yPos,imgH,imgW,lms
@@ -142,7 +144,6 @@ def show():
             #frame = cv2.resize(frame,(0,0),fx=0.5,fy=0.5)
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # 將幀轉換為 RGB 格式
             results = pose.process(frame_rgb)  # 進行姿勢關鍵點檢測
-        
             # 繪製關鍵點
             if results.pose_landmarks:
                 mp_drawing.draw_landmarks(frame, results.pose_landmarks, mpPose.POSE_CONNECTIONS)
@@ -150,38 +151,18 @@ def show():
                     xPos = int(lm.x*imgW)
                     yPos = int(lm.y*imgH)
                     lms=results.pose_landmarks
-
-                    #print(i, xPos, yPos)
-                    #cv2.putText(frame,str(i),(xPos-25,yPos+5),cv2.FONT_HERSHEY_COMPLEX,0.4,(0,0,255),2)#0.4大小
-
-                    # if i in point_body:
-                    #     cv2.circle(frame,(xPos,yPos),10,(0,255,0),cv2.FILLED)
-        
                 Angle.R_angle(Relbow_list,12,14,16)
                 Angle.R_angle(Rshoulder_list,14,12,24)
                 Angle.R_angle(Rbody_list,12,24,26)
                 Angle.R_angle(Rknee_list,24,26,28)
                 fps_show()
-                Draw.drawPlt()
-                
+                drawPlt()
             cv2.imshow("Output",frame)
-
-
         else:
             break
-        #wait_time = int(1000 / fps)
-        if cv2.waitKey(1)==ord("q"):
-            break
+        cv2.waitKey(10)
     cap.release()
     cv2.destroyAllWindows()
-    
-
-class analyze_data():
-    def detect_start_motion(detected_list):
-        if detected_list:
-            return
-        
-
 def stop_video():
     global running
     running = False  # 停止視頻播放循環
@@ -204,7 +185,7 @@ class tk_window():
         global cap,first_plt
         cap = cv2.VideoCapture(file_path)
         if not first_plt:
-            Draw.new_plt()
+            new_plt()
         first_plt = False
     upload_button = tk.Button(window,text="upload file",command=open_file_dialog,width=10)
     global upload_file_name_label
