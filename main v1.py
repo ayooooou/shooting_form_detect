@@ -9,15 +9,11 @@ from tkinter import filedialog
 import os
 import threading
 
+#pyinstaller --onefile --windowed --add-data "C:\\Users\\yoyok\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\mediapipe\\modules\\pose_landmark\\pose_landmark_cpu.binarypb;mediapipe/modules/pose_landmark" main.py
+
 #多線程
 #數學原理
 #打包
-
-# class TK():
-
-# class Opevcv():
-
-# class Plt():
 
 #mediapipe
 mpPose = mp.solutions.pose
@@ -42,9 +38,6 @@ def fps_show():
     global pTime
     cTime=time.time()
     fps = 1/(cTime-pTime)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    global total_video_seconds
-    total_video_seconds = total_frames * (1 / fps)
     pTime=cTime
     cv2.putText(frame,f"fps:{int(fps)}",(30,50),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,0),3)
 
