@@ -8,10 +8,7 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import threading
-<<<<<<< HEAD
 from data_collect import record as rc
-=======
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
 
 #pyinstaller --onefile --windowed --add-data "C:\\Users\\yoyok\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\mediapipe\\modules\\pose_landmark\\pose_landmark_cpu.binarypb;mediapipe/modules/pose_landmark" main.py
 
@@ -47,11 +44,7 @@ class Main():
         #Tk
         self.window = tk.Tk()
         self.window.title('shooting detect')
-<<<<<<< HEAD
         self.window.geometry('400x250')
-=======
-        self.window.geometry('400x200')
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
         self.window.resizable(True, False)
         title_label=tk.Label(self.window,text="shooting detect",font=("Helvetica", 30))
         start_button = tk.Button(self.window,text="start",command=self.show,width=10)
@@ -64,14 +57,11 @@ class Main():
         self.upload_file_name_label.grid(column=1, row=2)
         start_button.grid(column=0, row=3,pady=20)
         stop_button.grid(column=1, row=3)
-<<<<<<< HEAD
         
         one_motion_record=tk.Button(self.window,text="one",command=lambda: rc(self,"one"),width=10)
         one_motion_record.grid(column=0, row=4)
         two_motion_record=tk.Button(self.window,text="two",command=lambda: rc(self,"two"),width=10)
         two_motion_record.grid(column=1, row=4)
-=======
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
 
     #record_list
     def reset(self):
@@ -79,11 +69,7 @@ class Main():
         self.Rshoulder_list = []
         self.Rbody_list = []
         self.Rknee_list = []
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
     #fps
     def fps_show(self):
         cTime=time.time()
@@ -144,11 +130,7 @@ class Main():
         yPos = int(self.lms.landmark[b].y*self.imgH)
         cv2.putText(self.frame,str(f"{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
         list_name.append(angle_deg)
-<<<<<<< HEAD
     
-=======
-
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
     #show
     def show(self):
         self.running = True
@@ -189,18 +171,10 @@ class Main():
         if not self.first_plt:
             self.new_plt()
         self.first_plt = False
-<<<<<<< HEAD
                 
     def run(self):
         self.window.mainloop()
         
-    
-=======
-
-    def run(self):
-        self.window.mainloop()
->>>>>>> b511fe7349de14dd824ac2edaf62fc20a4d7bc73
-
 if __name__ == "__main__":
     app = Main()
     app.run()
