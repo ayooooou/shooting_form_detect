@@ -9,12 +9,12 @@ from tkinter import filedialog
 import os
 import threading
 from data_collect import record as rc
+from AIq import outputmotion
 
 #pyinstaller --onefile --windowed --add-data "C:\\Users\\yoyok\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\mediapipe\\modules\\pose_landmark\\pose_landmark_cpu.binarypb;mediapipe/modules/pose_landmark" main.py
 
 #多線程 嘗試方法一 把global改self 失敗
 #數學原理
-#打包
 
 class Main():
     def __init__(self):
@@ -62,6 +62,10 @@ class Main():
         one_motion_record.grid(column=0, row=4)
         two_motion_record=tk.Button(self.window,text="two",command=lambda: rc(self,"two"),width=10)
         two_motion_record.grid(column=1, row=4)
+        record_motion_record=tk.Button(self.window,text="record",command=lambda: rc(self,"record"),width=10)
+        record_motion_record.grid(column=0, row=5)
+        distinguish_motion_record=tk.Button(self.window,text="AI",command=outputmotion([0, self.Relbow_list, self.Rshoulder_list, self.Rbody_list, self.Rknee_list]))
+        distinguish_motion_record.grid(column=1, row=5)
 
     #record_list
     def reset(self):
@@ -172,6 +176,8 @@ class Main():
             self.new_plt()
         self.first_plt = False
                 
+    
+    
     def run(self):
         self.window.mainloop()
         
