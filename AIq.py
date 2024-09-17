@@ -5,6 +5,7 @@ from sklearn.preprocessing import OrdinalEncoder
 from tensorflow import keras
 from keras import layers
 import ast
+import tkinter.messagebox as messagebox
 
 ordinal_encoder = OrdinalEncoder()
 
@@ -118,10 +119,9 @@ def outputmotion():
     
     # 預測
     from keras.models import load_model
-    model = load_model('my_model.keras')
+    model = load_model('opencv\shooting_detect\my_model.keras')
     
     # 進行預測並輸出結果
     last_prediction = model.predict(last_feature)
     
-    print(f"Last row prediction: {last_prediction}")
-outputmotion()
+    messagebox.showinfo("Prediction Result", f"Last row prediction: {last_prediction}")
