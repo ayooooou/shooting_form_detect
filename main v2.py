@@ -64,7 +64,7 @@ class Main():
         # two_motion_record.grid(column=1, row=4)
         # # record_motion_record=tk.Button(self.window,text="record",command=lambda: rc(self,"record"),width=10)
         # # record_motion_record.grid(column=0, row=5)
-        distinguish_motion_record=tk.Button(self.window,text="AI",command=outputmotion,width=10)
+        distinguish_motion_record=tk.Button(self.window,text="one/two motion",command=outputmotion,width=10)
         distinguish_motion_record.grid(column=1, row=5)
 
     #record_list
