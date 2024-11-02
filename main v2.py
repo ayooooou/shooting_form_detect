@@ -64,8 +64,8 @@ class Main():
         # two_motion_record.grid(column=1, row=4)
         # # record_motion_record=tk.Button(self.window,text="record",command=lambda: rc(self,"record"),width=10)
         # # record_motion_record.grid(column=0, row=5)
-        distinguish_motion_record=tk.Button(self.window,text="one/two motion",command=outputmotion,width=10)
-        distinguish_motion_record.grid(column=1, row=5)
+        distinguish_motion_record=tk.Button(self.window,text="one/two motion",command=outputmotion,width=15)
+        distinguish_motion_record.grid(column=0, row=5)
 
     #record_list
     def reset(self):
@@ -195,7 +195,7 @@ class Main():
         file_path =  filedialog.askopenfilename()
         self.upload_file_name_label.config(text=os.path.basename(f"file name:{file_path}"))
         self.cap = cv2.VideoCapture(file_path)
-        if not self.first_plt:
+        if not self.first_plt and self.cap:
             self.new_plt()
         self.first_plt = False
                 

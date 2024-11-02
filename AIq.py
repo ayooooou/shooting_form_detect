@@ -124,4 +124,8 @@ def outputmotion():
     # 進行預測並輸出結果
     last_prediction = model.predict(last_feature)
     
-    messagebox.showinfo("Prediction Result", f"Last row prediction: {last_prediction}")
+    if last_prediction < 0.5:
+        messagebox.showinfo("Prediction Result",f"like one motion : {(1-last_prediction[0])*100}%")
+    else:
+        messagebox.showinfo("Prediction Result",f"like two motion : {(last_prediction[0])*100}%")
+    
