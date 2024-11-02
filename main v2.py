@@ -34,8 +34,8 @@ class Main():
         #draw
         self.first_plt=True
         plt.style.use('bmh')
-        plt.xlabel('time(frame)')
-        plt.ylabel('angle')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Angle (degrees)')
         plt.plot(self.Relbow_list,'b',label='elbow')
         plt.plot(self.Rshoulder_list,'g',label='shoulder')
         plt.plot(self.Rbody_list,'r',label='body')
@@ -104,24 +104,34 @@ class Main():
         angle_deg = int(180 - angle_deg)
         return angle_deg
 
-    def drawPlt(self):
+    def drawPlt(self, time_elapsed):
+        # 記錄時間點並與角度數據一同繪製
+        if not hasattr(self, 'time_points'):
+            self.time_points = []  # 初始化時間點列表
+    
+        # 添加當前時間點
+        self.time_points.append(time_elapsed)
+    
+        # 清空舊的圖表，重新繪製
         if self.RL == "R":
-            plt.plot(self.Relbow_list,'b')
-            plt.plot(self.Rshoulder_list,'g')
-            plt.plot(self.Rbody_list,'r')
-            plt.plot(self.Rknee_list,'y')
-            plt.pause(0.01)
+            plt.plot(self.time_points, self.Relbow_list, 'b')
+            plt.plot(self.time_points, self.Rshoulder_list, 'g')
+            plt.plot(self.time_points, self.Rbody_list, 'r')
+            plt.plot(self.time_points, self.Rknee_list, 'y')
+        plt.pause(0.01)
+
     def new_plt(self):
         self.reset()
         plt.figure()
         plt.style.use('bmh')
-        plt.xlabel('time(frame)')
-        plt.ylabel('angle')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Angle (degrees)')
+        plt.legend(loc='lower left')
         plt.plot(self.Relbow_list,'b',label='elbow')
         plt.plot(self.Rshoulder_list,'g',label='shoulder')
         plt.plot(self.Rbody_list,'r',label='body')
         plt.plot(self.Rknee_list,'y',label='knee')
-        plt.legend(loc='lower left')
+        self.time_points=[]
         plt.show()
 
     def R_angle(self,list_name,a,b,c):
@@ -135,35 +145,48 @@ class Main():
         cv2.putText(self.frame,str(f"{angle_deg}"),(xPos,yPos+20),cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)# 0.4大小
         list_name.append(angle_deg)
     
-    #show
     def show(self):
         self.running = True
+        fps = self.cap.get(cv2.CAP_PROP_FPS)  # 獲取影片幀率
+        time_elapsed = 0  # 用來記錄影片的秒數
+
         while self.running:
-            ret,self.frame=self.cap.read() #讀取回傳ret(bool)看是否有畫面 和 當前偵數的畫面frame
+            ret, self.frame = self.cap.read()
             if ret:
                 self.imgH = self.frame.shape[0]
                 self.imgW = self.frame.shape[1]
-                frame_rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB) # 將幀轉換為 RGB 格式
-                results = self.pose.process(frame_rgb)  # 進行姿勢關鍵點檢測
+                frame_rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+                results = self.pose.process(frame_rgb)
+
                 # 繪製關鍵點
                 if results.pose_landmarks:
                     self.mp_drawing.draw_landmarks(self.frame, results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
-                    for i,lm in enumerate(results.pose_landmarks.landmark):
-                        self.xPos = int(lm.x*self.imgW)
-                        self.yPos = int(lm.y*self.imgH)
-                        self.lms=results.pose_landmarks
-                    self.R_angle(self.Relbow_list,12,14,16)
-                    self.R_angle(self.Rshoulder_list,14,12,24)
-                    self.R_angle(self.Rbody_list,12,24,26)
-                    self.R_angle(self.Rknee_list,24,26,28)
+                    for i, lm in enumerate(results.pose_landmarks.landmark):
+                        self.xPos = int(lm.x * self.imgW)
+                        self.yPos = int(lm.y * self.imgH)
+                        self.lms = results.pose_landmarks
+
+                    # 計算角度
+                    self.R_angle(self.Relbow_list, 12, 14, 16)
+                    self.R_angle(self.Rshoulder_list, 14, 12, 24)
+                    self.R_angle(self.Rbody_list, 12, 24, 26)
+                    self.R_angle(self.Rknee_list, 24, 26, 28)
+
+                    # 繪製 FPS 和更新繪圖
                     self.fps_show()
-                    self.drawPlt()
-                cv2.imshow("Output",self.frame)
+                    self.drawPlt(time_elapsed)  # 傳入影片的秒數來畫圖
+
+                cv2.imshow("Output", self.frame)
+
+                # 更新時間（秒數）
+                time_elapsed += 1 / fps  # 增加時間（每一幀時間）
             else:
                 break
+
             cv2.waitKey(10)
         self.cap.release()
         cv2.destroyAllWindows()
+
         
     def stop_video(self):
         self.running = False  # 停止視頻播放循環
