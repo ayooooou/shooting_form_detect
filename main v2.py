@@ -118,6 +118,7 @@ class Main():
             plt.plot(self.time_points, self.Rshoulder_list, 'g')
             plt.plot(self.time_points, self.Rbody_list, 'r')
             plt.plot(self.time_points, self.Rknee_list, 'y')
+            plt.legend(loc='lower left')
         plt.pause(0.01)
 
     def new_plt(self):
