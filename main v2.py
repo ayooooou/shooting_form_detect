@@ -27,6 +27,10 @@ class Main():
         self.Rshoulder_list = []
         self.Rbody_list = []
         self.Rknee_list = []
+        self.Lelbow_list = []
+        self.Lshoulder_list = []
+        self.Lbody_list = []
+        self.Lknee_list = []
         #fps
         self.pTime=0
         #RL
@@ -36,10 +40,16 @@ class Main():
         plt.style.use('bmh')
         plt.xlabel('Time (s)')
         plt.ylabel('Angle (degrees)')
-        plt.plot(self.Relbow_list,'b',label='elbow')
-        plt.plot(self.Rshoulder_list,'g',label='shoulder')
-        plt.plot(self.Rbody_list,'r',label='body')
-        plt.plot(self.Rknee_list,'y',label='knee')
+        if self.RL == "R":
+            plt.plot(self.Relbow_list,'b',label='Relbow')
+            plt.plot(self.Rshoulder_list,'g',label='Rshoulder')
+            plt.plot(self.Rbody_list,'r',label='Rbody')
+            plt.plot(self.Rknee_list,'y',label='Rknee')
+        else:
+            plt.plot(self.Lelbow_list,'b',label='Lelbow')
+            plt.plot(self.Lshoulder_list,'g',label='Lshoulder')
+            plt.plot(self.Lbody_list,'r',label='Lbody')
+            plt.plot(self.Lknee_list,'y',label='Lknee')
         plt.legend(loc='lower left')
         #Tk
         self.window = tk.Tk()
@@ -66,6 +76,8 @@ class Main():
         # # record_motion_record.grid(column=0, row=5)
         distinguish_motion_record=tk.Button(self.window,text="one/two motion",command=outputmotion,width=15)
         distinguish_motion_record.grid(column=0, row=5)
+        self.RL_button=tk.Button(self.window,text="Right/Left",command=self.RL_change,width=15)
+        self.RL_button.grid(column=1, row=5)
 
     #record_list
     def reset(self):
@@ -73,6 +85,10 @@ class Main():
         self.Rshoulder_list = []
         self.Rbody_list = []
         self.Rknee_list = []
+        self.Lelbow_list = []
+        self.Lshoulder_list = []
+        self.Lbody_list = []
+        self.Lknee_list = []
     
     #fps
     def fps_show(self):
@@ -118,7 +134,13 @@ class Main():
             plt.plot(self.time_points, self.Rshoulder_list, 'g')
             plt.plot(self.time_points, self.Rbody_list, 'r')
             plt.plot(self.time_points, self.Rknee_list, 'y')
-            plt.legend(loc='lower left')
+        else:
+            plt.plot(self.time_points, self.Lelbow_list, 'b')
+            plt.plot(self.time_points, self.Lshoulder_list, 'g')
+            plt.plot(self.time_points, self.Lbody_list, 'r')
+            plt.plot(self.time_points, self.Lknee_list, 'y')
+            
+        plt.legend(loc='lower left')
         plt.pause(0.01)
 
     def new_plt(self):
@@ -128,14 +150,20 @@ class Main():
         plt.xlabel('Time (s)')
         plt.ylabel('Angle (degrees)')
         plt.legend(loc='lower left')
-        plt.plot(self.Relbow_list,'b',label='elbow')
-        plt.plot(self.Rshoulder_list,'g',label='shoulder')
-        plt.plot(self.Rbody_list,'r',label='body')
-        plt.plot(self.Rknee_list,'y',label='knee')
+        if self.RL == "R":
+            plt.plot(self.Relbow_list,'b',label='Relbow')
+            plt.plot(self.Rshoulder_list,'g',label='Rshoulder')
+            plt.plot(self.Rbody_list,'r',label='Rbody')
+            plt.plot(self.Rknee_list,'y',label='Rknee')
+        else:
+            plt.plot(self.Lelbow_list,'b',label='Lelbow')
+            plt.plot(self.Lshoulder_list,'g',label='Lshoulder')
+            plt.plot(self.Lbody_list,'r',label='Lbody')
+            plt.plot(self.Lknee_list,'y',label='Lknee')
         self.time_points=[]
         plt.show()
 
-    def R_angle(self,list_name,a,b,c):
+    def angle(self,list_name,a,b,c):
         x1, y1 = int(self.lms.landmark[a].x * self.imgW), int(self.lms.landmark[a].y * self.imgH)
         x2, y2 = int(self.lms.landmark[b].x * self.imgW), int(self.lms.landmark[b].y * self.imgH)
         x3, y3 = int(self.lms.landmark[c].x * self.imgW), int(self.lms.landmark[c].y * self.imgH)
@@ -168,10 +196,16 @@ class Main():
                         self.lms = results.pose_landmarks
 
                     # 計算角度
-                    self.R_angle(self.Relbow_list, 12, 14, 16)
-                    self.R_angle(self.Rshoulder_list, 14, 12, 24)
-                    self.R_angle(self.Rbody_list, 12, 24, 26)
-                    self.R_angle(self.Rknee_list, 24, 26, 28)
+                    if self.RL=="R":
+                        self.angle(self.Relbow_list, 12, 14, 16)
+                        self.angle(self.Rshoulder_list, 14, 12, 24)
+                        self.angle(self.Rbody_list, 12, 24, 26)
+                        self.angle(self.Rknee_list, 24, 26, 28)
+                    else:
+                        self.angle(self.Lelbow_list, 11, 13, 15)
+                        self.angle(self.Lshoulder_list, 13, 11, 23)
+                        self.angle(self.Lbody_list, 11, 23, 25)
+                        self.angle(self.Lknee_list, 23, 25, 27)
 
                     # 繪製 FPS 和更新繪圖
                     self.fps_show()
@@ -183,7 +217,6 @@ class Main():
                 time_elapsed += 1 / fps  # 增加時間（每一幀時間）
             else:
                 break
-
             cv2.waitKey(10)
         self.cap.release()
         cv2.destroyAllWindows()
@@ -199,9 +232,14 @@ class Main():
         if not self.first_plt and self.cap:
             self.new_plt()
         self.first_plt = False
-                
     
-    
+    def RL_change(self):
+        if self.RL == "R" : 
+            self.RL="L"
+            self.RL_button.config(text="now L")
+        else: 
+            self.RL = "R"
+            self.RL_button.config(text="now R")  
     def run(self):
         self.window.mainloop()
         
